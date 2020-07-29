@@ -115,7 +115,7 @@ function handleMouseDown(view, event, cellMinWidth) {
       updateColumnWidth(view, pluginState.activeHandle, dragged)
       
       let nextTableCell = nextCell(view.state.tr.doc.resolve(pluginState.activeHandle), "horiz", 1)
-      if(nextTableCell)
+      if(nextTableCell) {
         let nextCellNode = view.state.tr.doc.nodeAt(nextTableCell.pos)
         let nextCellColwidth = currentColWidth(view, nextTableCell.pos, nextCellNode.attrs)
         let startWidth = pluginState.dragging.startWidth
@@ -127,7 +127,7 @@ function handleMouseDown(view, event, cellMinWidth) {
           updatedColVal -= dragged - startWidth
 
         updateColumnWidth(view, nextTableCell.pos, Math.max(cellMinWidth, updatedColVal))
-
+      }
       view.dispatch(view.state.tr.setMeta(key, {setDragging: null}))
     }
   }
