@@ -47,14 +47,16 @@ export function updateColumns(node, colgroup, table, cellMinWidth, overrideCol, 
       if ((overrideCol + 1) == col) {
         if (updatedColValType == 'ADD') {
           hasWidth += updatedColVal
+          totalWidth += updatedColVal
         } else {
           hasWidth -= updatedColVal
+          totalWidth -= updatedColVal
         }
       }
 
       let cssWidth = hasWidth ? hasWidth + "px" : ""
       
-      if (!hasWidth) fixedWidth = false
+      if (!hasWidth && !noTableWidth) fixedWidth = false
       if (!nextDOM) {
         colgroup.appendChild(document.createElement("col")).style.width = cssWidth
       } else {
@@ -70,19 +72,12 @@ export function updateColumns(node, colgroup, table, cellMinWidth, overrideCol, 
     nextDOM = after
   }
 
-  if (noTableWidth) {
-    if (fixedWidth) {
-      table.style.minWidth = ""
-    } else {
-      table.style.width = ""
-    }
+  if (fixedWidth) {
+    table.style.width = totalWidth + "px"
+    table.style.minWidth = ""
   } else {
-    if (fixedWidth) {
-      table.style.width = totalWidth + "px"
-      table.style.minWidth = ""
-    } else {
-      table.style.width = ""
-      table.style.minWidth = totalWidth + "px"
-    }
+    table.style.width = ""
+    table.style.minWidth = totalWidth + "px"
   }
+
 }
