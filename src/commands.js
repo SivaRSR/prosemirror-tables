@@ -350,6 +350,35 @@ export function setCellAttr(name, value) {
   }
 }
 
+// :: (EditorState, dispatch: ?(tr: Transaction)) → bool
+// Update cell width equally for the selected row.
+export function setEqualCellWidth(state, dispatch, view, cellMinWidth=25) {
+  if (!isInTable(state)) return false
+  if (dispatch) {
+    let tr = state.tr, domWidth = 0, moreRows = false, value = cellMinWidth, cellCount = 0, name = 'colwidth'
+    if (state.selection instanceof CellSelection)
+      state.selection.forEachCell((node, pos, rect) => {
+        cellCount += 1
+        const { attrs } = node
+        if (attrs.colwidth) for (let i = 0; i < attrs.colspan; i++) if (attrs.colwidth[i]) {
+          domWidth += attrs.colwidth[i]
+        }
+        let _rect = selectedRect(state), cells = _rect.map.cellsInRect(new Rect(_rect.left, 0, _rect.right, _rect.map.height))
+        moreRows = rect.bottom - rect.top > 1
+        value = Math.max(cellMinWidth, domWidth / cellCount)
+        if (!moreRows) {
+          for (let i = 0; i < cells.length; i++) {
+            tr.setNodeMarkup(_rect.tableStart + cells[i], null, setAttr(node.attrs, name, [value]))
+          }
+        }
+      })
+    else
+      return false
+    dispatch(tr)
+  }
+  return true
+}
+
 function deprecated_toggleHeader(type) {
   return function(state, dispatch) {
     if (!isInTable(state)) return false

@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {cellAround, pointsAtCell, setAttr} from "./util"
+import {cellAround, pointsAtCell, setAttr, nextCell} from "./util"
 import {TableMap} from "./tablemap"
 import {TableView, updateColumns} from "./tableview"
 import {tableNodeTypes} from "./schema"
@@ -111,7 +111,23 @@ function handleMouseDown(view, event, cellMinWidth) {
     window.removeEventListener("mousemove", move)
     let pluginState = key.getState(view.state)
     if (pluginState.dragging) {
-      updateColumnWidth(view, pluginState.activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth))
+      let dragged = draggedWidth(pluginState.dragging, event, cellMinWidth)
+      updateColumnWidth(view, pluginState.activeHandle, dragged)
+      
+      let nextTableCell = nextCell(view.state.tr.doc.resolve(pluginState.activeHandle), "horiz", 1)
+      if(nextTableCell)
+        let nextCellNode = view.state.tr.doc.nodeAt(nextTableCell.pos)
+        let nextCellColwidth = currentColWidth(view, nextTableCell.pos, nextCellNode.attrs)
+        let startWidth = pluginState.dragging.startWidth
+        let updatedColVal = nextCellColwidth
+        
+        if (startWidth >= dragged)
+          updatedColVal += startWidth - dragged
+        else
+          updatedColVal -= dragged - startWidth
+
+        updateColumnWidth(view, nextTableCell.pos, Math.max(cellMinWidth, updatedColVal))
+
       view.dispatch(view.state.tr.setMeta(key, {setDragging: null}))
     }
   }

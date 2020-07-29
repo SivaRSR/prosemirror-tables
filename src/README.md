@@ -64,3 +64,5 @@ available to users.
 @fixTables
 
 @TableMap
+
+@setEqualCellWidth

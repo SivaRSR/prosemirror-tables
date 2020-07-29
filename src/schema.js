@@ -65,7 +65,7 @@ export function tableNodes(options) {
   let cellAttrs = {
     colspan: {default: 1},
     rowspan: {default: 1},
-    colwidth: {default: null}
+    colwidth: {default: [180]}
   }
   for (let prop in extraAttrs)
     cellAttrs[prop] = {default: extraAttrs[prop].default}
