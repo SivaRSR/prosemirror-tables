@@ -231,6 +231,10 @@ class CellBookmark {
 }
 
 export function drawCellSelection(state) {
+  // discard table cell selection when editor is not in editable mode
+  const editablePlugin = state.plugins.find(plugin => plugin.key.startsWith('editable$'))
+  const editable = editablePlugin.props.editable()
+  if (!editable) return null
   if (!(state.selection instanceof CellSelection)) return null
   let cells = []
   state.selection.forEachCell((node, pos) => {

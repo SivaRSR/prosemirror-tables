@@ -23,6 +23,9 @@ export function columnResizing({ handleWidth = 5, cellMinWidth = 25, View = Tabl
     props: {
       attributes(state) {
         let pluginState = key.getState(state)
+        const editablePlugin = state.plugins.find(plugin => plugin.key.startsWith('editable$'))
+        const editable = editablePlugin.props.editable()
+        if (!editable) return null
         return pluginState.activeHandle > -1 ? {class: "resize-cursor"} : null
       },
 
@@ -100,7 +103,9 @@ function handleMouseLeave(view) {
 
 function handleMouseDown(view, event, cellMinWidth) {
   let pluginState = key.getState(view.state)
-  if (pluginState.activeHandle == -1 || pluginState.dragging) return false
+  const editablePlugin = view.state.plugins.find(plugin => plugin.key.startsWith('editable$'))
+  const editable = editablePlugin.props.editable()
+  if (!editable || pluginState.activeHandle == -1 || pluginState.dragging) return false
 
   let cell = view.state.doc.nodeAt(pluginState.activeHandle)
   let width = currentColWidth(view, pluginState.activeHandle, cell.attrs)
