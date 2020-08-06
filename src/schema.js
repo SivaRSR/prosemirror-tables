@@ -7,7 +7,7 @@ function getCellAttrs(dom, extraAttrs) {
   let result = {
     colspan,
     rowspan: Number(dom.getAttribute("rowspan") || 1),
-    colwidth: widths && widths.length == colspan ? widths : null
+    colwidth: widths && widths.length == colspan ? widths : [180]
   }
   for (let prop in extraAttrs) {
     let getter = extraAttrs[prop].getFromDOM
