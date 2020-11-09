@@ -25,7 +25,9 @@ export class TableView {
 export function updateColumns(node, colgroup, table, cellMinWidth, overrideCol, overrideValue) {
   let totalWidth = 0, fixedWidth = true, noTableWidth = true
   let nextDOM = colgroup.firstChild, row = node.firstChild, defaultWidth = 180, updatedColValType = null, updatedColVal = 0
-  
+
+  if (!row) return
+
   for (let i = 0, col = 0; i < row.childCount; i++) {
     let {colspan, colwidth} = row.child(i).attrs
     for (let j = 0; j < colspan; j++, col++) {
